@@ -118,7 +118,7 @@ const experiences = [
   {
     title: "AI Engineer Intern",
     company_name: "AMD",
-    date: "Sept 2024 - Present",
+    date: "Incoming Sep 2024",
 
     points: [
       "Research and development of sparsity schemes on SOTA LLM accelerators.",
@@ -127,7 +127,7 @@ const experiences = [
   {
     title: "Software Engineer Intern",
     company_name: "Nightwing (Raytheon CODEX)",
-    date: "May 2024 - Present",
+    date: "Jun 2024 - Aug 2024",
 
     points: [
       "Developed Windows decoy file system kernel driver to intercept & redirect I/O packets, deceiving root-level attackers.",
