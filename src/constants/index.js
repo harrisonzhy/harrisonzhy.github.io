@@ -116,38 +116,48 @@ const technologies = [
 
 const experiences = [
   {
-    title: "Software Engineer Intern",
-    company_name: "Raytheon Technologies",
-    icon: raytheon,
-    iconBg: "#FFFFFF",
-    date: "May 2024 - Present",
+    title: "AI Engineer Intern",
+    company_name: "AMD",
+    date: "Sept 2024 - Present",
+
     points: [
-      "Incoming intern in the Cyber Offense & Defense Experts (CODEX) division doing vulnerability research.",
-    ],
+      "Research and development of sparsity schemes on SOTA LLM accelerators.",
+    ]
   },
   {
-    title: "Undergraduate Researcher",
+    title: "Software Engineer Intern",
+    company_name: "Nightwing (Raytheon CODEX)",
+    date: "May 2024 - Present",
+
+    points: [
+      "Developed Windows decoy file system kernel driver to intercept & redirect I/O packets, deceiving root-level attackers.",
+      "Architected and scaled the end-to-end filter driver stack to handle a suite of 9,500+ real and decoy file mappings.",
+      "Building proprietary tooling to probe router firmware attack surfaces through SNMP and enable traffic espionage.",
+      "Decreased ensemble build time 25x by creating “Knot” framework to integrate build chains for 31,000 components.",
+    ]
+
+  },
+  {
+    title: "Researcher",
     company_name: "MIT Computer Science and Artificial Intelligence Laboratory (CSAIL)",
-    icon: csail,
-    iconBg: "#FFFFFF",
+    company_description: "Computation Structures Group",
     date: "Jan 2024 - Present",
     points: [
-      "Leading team of 3 to build parallel graph methods to predict weight access in deep learning recommender models.",
-      "Developing a novel multicore quantized cache system for accelerating DLRM inference on GPU (CUDA) and CPU.",
-      "Achieved 32% speedup, 40% memory savings at 0.2% accuracy loss on FAIR benchmarks. Results scale to multi-model GPUs."
+      "Leading team of 3 undergrads to build low latency inference methods for deep learning recommendation systems.",
+      "Developing fast multicore embedding lookup engine on GPU, culminating in 6,000+ LOC in C++, CUDA, PyTorch.",
+      "Achieved 32% speedup and 29% memory saving over SOTA on FAIR benchmarks, scalable to multi-model GPUs.",
+      "Exploring latency-accuracy tradeoff with Facebook Folly for quantization, sharded caching, lock-free algorithms.",
     ],
   },
   {
-    title: "Undergraduate Researcher",
+    title: "Researcher",
     company_name: "Harvard Edge Computing Lab",
-    icon: edgecompute,
-    iconBg: "#FFFFFF",
     date: "May 2023 - Dec 2023",
     points: [
-      "Developed a custom embedded platform for accelerating AR/VR ML apps using Google’s FPGA ISA playground.",
-      "As second team member, compiled first version of project firmware (ARM) and engineered core CNN architectures.",
-      "Built a robust build system and debugger now used by 30+ researchers, significantly enhancing project scalability.",
-      "Interfaced open-source ML models by creating universal integration templates, leading migration past prototyping."
+      "Developed software platform to accelerate AR/VR machine learning apps using Google’s FPGA ISA playground.",
+      "Built the de-facto build system and debugger tool now used by 30+ researchers, reducing setup and downtime by 35%.",
+      "As second team member, compiled first versions of project firmware (ARM) and engineered core DNN architectures.",
+      "Led project migration past prototyping by deploying universal templates to interface open-source ML models.",
     ],
   },
 ];
@@ -167,19 +177,19 @@ const projects = [
   {
     name: "Chickadee OS",
     description:
-      "A multicore operating system with buddy and slab memory allocation, process hierarchy, CPU scheduler, virtual file system API, asynchronous disk file system, and Intel VT-x KVM virtualization support.",
+      "A multicore operating system with buddy and slab memory allocation, process hierarchy, CPU scheduler, virtual file system API, (fault tolerant, journaling) asynchronous disk file system, and KVM support via Intel VT-x virtualization.",
     tags: [
       {
         name: "C++",
-        color: "blue-text-gradient",
+        color: "violet-text-gradient",
       },
       {
         name: "OS-Internals",
-        color: "green-text-gradient",
+        color: "blue-text-gradient",
       },
       {
         name: "Virtualization",
-        color: "pink-text-gradient",
+        color: "green-text-gradient",
       },
     ],
     source_code_link: "",
@@ -191,15 +201,15 @@ const projects = [
     tags: [
       {
         name: "C++",
-        color: "blue-text-gradient",
+        color: "violet-text-gradient",
       },
       {
         name: "CUDA",
-        color: "green-text-gradient",
+        color: "blue-text-gradient",
       },
       {
         name: "Graphics",
-        color: "pink-text-gradient",
+        color: "green-text-gradient",
       },
     ],
     source_code_link: "",
@@ -207,19 +217,19 @@ const projects = [
   {
     name: "Oasis",
     description:
-      "A decentralized, anonymous, and gamified Web3 social media platform prioritizing authentic community discussion. Fine-tuned LLM agents are leveraged to help users enforce community guidelines.",
+      "A decentralized, anonymous, and gamified Web3 social media platform prioritizing authentic community discussion. Leverages fine-tuned LLM agents to help users enforce community guidelines.",
       tags: [
       {
         name: "React",
-        color: "blue-text-gradient",
+        color: "violet-text-gradient",
       },
       {
         name: "Javascript",
-        color: "green-text-gradient",
+        color: "blue-text-gradient",
       },
       {
         name: "AI/ML",
-        color: "pink-text-gradient",
+        color: "green-text-gradient",
       },
     ],
     source_code_link: "",
@@ -227,41 +237,39 @@ const projects = [
   {
     name: "Alcolyze",
     description:
-      "A user application written in Swift leveraging fine-tuned state-of-the-art semantic segmentation models to conduct personalized sobriety testing.",
+      "A user application to conduct personalized sobriety testing using semantic segmentation.",
     tags: [
+      {
+        name: "PyTorch",
+        color: "violet-text-gradient",
+      },
       {
         name: "Swift",
         color: "blue-text-gradient",
       },
       {
-        name: "PyTorch",
+        name: "Vision",
         color: "green-text-gradient",
-      },
-      {
-        name: "Computer-Vision",
-        color: "pink-text-gradient",
       },
     ],
     source_code_link: "",
   },
   {
-    name: "Robotic Butterfly",
+    name: "Biomimetic Butterfly",
     description:
-      "A biomimetic robotic butterfly that actually flies. \
-      Lightweight skeleton is constructed from carbon fiber and \
-      3D printed parts, and movement is controlled by custom embedded firmware.",
+      "A robotic butterfly that actually flies. Constructed from carbon fiber, calibrated using ANSYS fluid simulation and controlled by custom firmware.",
     tags: [
+      {
+        name: "Robotics",
+        color: "violet-text-gradient",
+      },
       {
         name: "Embedded-Systems",
         color: "blue-text-gradient",
       },
       {
-        name: "Firmware",
-        color: "green-text-gradient",
-      },
-      {
         name: "Robotics",
-        color: "pink-text-gradient",
+        color: "green-text-gradient",
       },
     ],
     source_code_link: "",

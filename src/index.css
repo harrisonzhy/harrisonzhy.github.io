@@ -39,7 +39,7 @@
   background: -webkit-linear-gradient(
     -90deg,
     #ee4d88 0%,
-    rgba(60, 51, 80, 0) 100%
+    rgba(124, 86, 206, 0.973) 100%
   );
   }
 
@@ -74,51 +74,62 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+/* 
+.violet-text-gradient {
+  background: #D37194;
+  background: linear-gradient(-90deg, #D37194 0%, rgba(60, 51, 80, 0) 100%);
+  background: -webkit-linear-gradient(
+    -90deg,
+    #ee4d88 0%,
+    rgba(124, 86, 206, 0.973) 100%
+  );
+  } */
+
+
+.violet-text-gradient {
+    background: #360d32; /* fallback for old browsers */
+    background: -webkit-linear-gradient(
+      to top,
+      #ff005d,
+      #4f27a5
+    ); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(
+      to top,
+      #ff005d,
+      #4f27a5
+    ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
 
 .green-text-gradient {
   background: #360d32; /* fallback for old browsers */
   background: -webkit-linear-gradient(
     to top,
-    #EB644D,
-    #412921
+    #78c2ff,
+    rgb(0, 147, 135)
   ); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(
     to top,
-    #EB644D,
-    #412921
+    #78c2ff,
+    rgb(0, 147, 135)
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .blue-text-gradient {
-  /* background: -webkit-linear-gradient(#eee, #333); */
-  background: #56ccf2; /* fallback for old browsers */
-  background: -webkit-linear-gradient(
-    to top,
-    #dc5e48,
-    #3d0c03
-  ); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(
-    to top,
-    #dc5e48,
-    #3d0c03
-  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.pink-text-gradient {
   background: #D37194; /* fallback for old browsers */
   background: -webkit-linear-gradient(
     to top,
-    #2838c8,
-    #052664
+    #3373ff,
+    #8c48cb
   ); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(
     to top,
-    #2838c8,
-    #12377c
+    #4f87ff,
+    #8c48cb
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

@@ -56,27 +56,74 @@ const ExperienceCard = ({ experience }) => {
   );
 };
 
+
+const ExperienceCardNormal = ({ experience }) => {
+  return (
+    <>
+      <div>
+        <h3 className='text-primary text-[24px] font-semibold'>{experience.title}</h3>
+      
+        <p
+          style={{ 
+            margin: 0, 
+            display: 'flex', 
+            alignItems: 'center', 
+          }}
+          className="text-secondary text-[16px] font-medium"
+        >
+          {experience.company_name}
+          <span style={{ marginLeft: 'auto' }}>
+            {experience.date}
+          </span>
+        </p>
+
+        <p
+          style={{ 
+            marginTop: 10,
+            marginBottom: -10, 
+            display: 'flex', 
+            alignItems: 'center', 
+          }}
+          className="text-secondary text-[15px]"
+        >
+          <span style={{ margin: 0, }}>
+            {experience.company_description ? experience.company_description : ""}
+          </span>
+        </p>
+      
+      </div>
+      <ul className='mt-5 list-disc ml-5 space-y-2'>
+
+        {experience.points.map((point, index) => (
+          <li
+            key={`experience-point-${index}`}
+            className='text-secondary text-[14px] pl-1 tracking-wider'
+          >
+            {point}
+          </li>
+        ))}
+      </ul>
+      <div style={{ paddingTop: '20px', paddingBottom: '20px' }}></div>
+    </>
+  );
+};
+
 const Experience = () => {
   return (
     <>
       <motion.div variants={textVariant()}>
-        <p className={`${styles.sectionSubText} text-center`}>
-          What I've done so far
-        </p>
-        <h2 className={`${styles.sectionHeadText} text-center`}>
+        <h2 className={`${styles.sectionHeadText}`}>
           Experience.
         </h2>
       </motion.div>
 
-      <div className='mt-20 flex flex-col'>
-        <VerticalTimeline>
+      <div className='mt-14 flex flex-col'>
           {experiences.map((experience, index) => (
-            <ExperienceCard
+            <ExperienceCardNormal
               key={`experience-${index}`}
               experience={experience}
             />
           ))}
-        </VerticalTimeline>
       </div>
     </>
   );

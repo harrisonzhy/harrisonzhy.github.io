@@ -1,9 +1,9 @@
 {
-  "name": "itsharrisonzhang.github.io",
+  "name": "harrisonzhy.github.io",
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "homepage": "https://itsharrisonzhang.github.io/itsharrisonzhang.github.io",
+  "homepage": "https://harrisonzhy.github.io/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

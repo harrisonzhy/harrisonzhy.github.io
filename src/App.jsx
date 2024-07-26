@@ -5,11 +5,9 @@ import { About, Experience, Hero, Navbar, Works } from "./components";
 const App = () => {
   return (
     <BrowserRouter>
-      <div className='relative z-0 bg-[#2C2C3C]'>
+      <div className='relative z-0 bg-[#ffffff]'>
 
-          <Navbar />
-          <Hero />
-
+        <Navbar />
         <About />
         <Experience />
         <div id="project">
