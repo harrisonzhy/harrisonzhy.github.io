@@ -38,23 +38,27 @@ export const navLinks = [
     id: "project",
     title: "Projects",
   },
+  {
+    id: "class",
+    title: "Classes",
+  },
 ];
 
 const services = [
   {
     title: "GitHub",
     icon: github,
-    link: "https://github.com/itsharrisonzhang",
+    link: "https://github.com/harrisonzhy",
   },
   {
     title: "LinkedIn",
     icon: linkedin,
-    link: "https://www.linkedin.com/in/itsharrisonzhang/",
+    link: "https://www.linkedin.com/in/harrisonzhy/",
   },
   {
     title: "Email",
     icon: gmail,
-    link: "mailto:itsharrisonzhang@gmail.com",
+    link: "mailto:zhangharrisony@gmail.com",
   },
   {
     title: "Resume",
@@ -276,4 +280,63 @@ const projects = [
   },
 ];
 
-export { services, technologies, experiences, testimonials, projects };
+const classes = [
+  {
+    number: "6.837*",
+    name: "Advanced Computational Photography",
+  }, 
+  {
+    number: "6.594*",
+    name: "TinyML and Efficient Deep Learning Computing",
+  },
+  {
+    number: "9.66*",
+    name: "Computational Cognitive Science",
+  }, 
+  {
+    number: "6.593*",
+    name: "Deep Learning Hardware Architecture",
+  },
+  {
+    number: "CS 161",
+    name: "Operating Systems",
+  },
+  {
+    number: "CS 181",
+    name: "Machine Learning",
+  },
+  {
+    number: "6.172",
+    name: "Software Performance Engineering",
+  },
+  {
+    number: "MATH 112",
+    name: "Real Analysis",
+  },
+  {
+    number: "CS 124",
+    name: "Data Structures and Algorithms",
+  },
+  {
+    number: "CS 175",
+    name: "Computer Graphics",
+  },
+  {
+    number: "MATH 161",
+    name: "Formal Verification",
+  },
+  {
+    number: "CS 61",
+    name: "Systems Programming",
+  },
+  {
+    number: "STAT 110",
+    name: "Probability",
+  },
+  {
+    number: "MATH 22A",
+    name: "Linear Algebra",
+  },
+];
+
+export { experiences, projects, classes };

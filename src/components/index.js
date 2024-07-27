@@ -3,6 +3,7 @@ import Navbar from "./Navbar";
 import About from "./About";
 import Experience from "./Experience";
 import Works from "./Works";
+import Classes from "./Classes"
 import CanvasLoader from "./Loader";
 
 
@@ -12,5 +13,6 @@ export {
   About,
   Experience,
   Works,
+  Classes,
   CanvasLoader,
 };
