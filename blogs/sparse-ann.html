@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+
+  <meta name="description" content="Blog">
+  <meta name="author" content="Harrison Zhang">
+  <meta name="keywords" content="Sparse Approximate Nearest Neighbor,Approximate Nearest Neighbor,Vector Search,Nearest Neighbor,FAISS,ANN">
+
+  <title>Harrison Zhang</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Academicons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <!-- My CSS -->
+  <link href="../css/blog-style.css" rel="stylesheet">
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    });
+  </script>
+      
+  <script type="text/javascript"
+          src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+</head>
+
+<body>
+
+  <div class="container-fluid">
+
+    <!-- Title -->
+    <div class="sec-wrapper blog-wrapper" id="title">
+      <div class="row align-items-center">
+        <div class="col-sm col-wrapper">
+          <div class="description">
+            <div class="name">High-Dimensional Sparse Approximate Nearest Neighbor Search using Ray Tracing Primitives</div>
+            <div class="blog-author">
+              <me>Harrison Zhang</me>,
+              Xuhao Chen
+            </div>
+            <div class="highlight">
+              MIT CSAIL
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Title -->
+
+    <!-- Abstract -->
+    <div class="sec-wrapper blog-sec-wrapper" id="abstract">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">tl;dr</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+This work in progress develops a high-performance, sparsity-aware indexing algorithm for ANN search using ray tracing primitives, 
+which exploits data sparsity for high query throughput through efficient utilization of compute power and memory
+bandwidth on modern commodity hardware (CPUs). We co-design the high-dimensional sparse specialization with existing SotA 
+<a href="https://github.com/facebookresearch/faiss">Facebook AI Similarity Search (FAISS)</a> suite for nearest neighbor search.
+        </div>
+      </div>
+    </div>
+    <!-- Abstract -->
+
+
+    <!-- Introduction -->
+    <div class="sec-wrapper blog-sec-wrapper" id="enhancement">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Introduction</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+Nearest neighbor search is a fundamental problem in computational geometry with
+applications in computer vision, recommendation systems, and natural language processing. 
+However, as data dimensions increase, the curse
+of dimensionality causes distances between points to lose their discriminative
+power, making exact search expensive and infeasible. To address this, approximate nearest neighbor (ANN) methods have
+been proposed, offering faster query times with a trade-off in accuracy. These
+methods, including tree-based, hashing, and graph-based approaches, perform
+well on dense low-dimensional datasets. However, on sparse high-dimensional 
+data, they suboptimally utilize compute power and memory bandwidth, resulting in low query throughput. 
+Therefore, we work toward a low latency ray-tracing-inspired algorithm specialized for high-dimensional sparse ANN search.
+</p>
+        </div>
+      </div>
+    </div>
+    <!-- Introduction -->
+
+
+    <!-- About NN -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+        <div class="row section-head">
+          <div class="col col-wrapper">
+            <div class="section-title">Nearest Neighbor</div>
+          </div>
+        </div>
+        <div class="row section-item">
+          <div class="col col-wrapper">
+<p>
+We begin with a dataset of search points $\mathcal{X}=\{x_1, x_2, \dots, x_n\}$ and queries $Q=\{q_1, q_2, \dots, q_{n'}\}$ 
+with $x_i, q_j \in \mathbb{R}^D$. We would like to find for each query $q_j$:
+$$ { \arg \min_{x_i} \text{d}(x_i, q_j) } $$
+for some distance metric $\text{d}(\cdot, \cdot)$ over $\mathbb{R}^D$ which is usually the Euclidean metric. For maximum inner product similarity (MIPS) 
+where higher is better, we instead find for each $q_j$: 
+$$ { \arg \max_{x_i} \text{MIPS}(x_i, q_j) } $$
+</p>
+<p>
+The search accuracy is measured with recall metric. $1$-recall@$R$ means the algorithm returns $R$ candidates for the 
+true (i.e. $1$) nearest neighbor, and if the 1-nearest-neighbor is contained in this set, then an indicator score is incremented. 
+Indicator scores are then accumulated and averaged across all queries. 
+$$ { 1\text{-recall@}R = \frac{1}{n'}\sum_{j=1}^{n'}\mathbb{I}_j\left[ \text{1-nearest-neighbor is in $q_j$'s candidate set of size $R$ } \right] } $$
+</p>
+<p>
+These definitions are similar for $k$NN search where accuracy is typically measured by $k$-recall@$R$. 
+High accuracy ANN search algorithms have high $R$-recall@$R$, but of course this is difficult to achieve and balance with performance.
+</p>
+            </div>
+          </div>
+        </div>
+      <!-- About NN -->
+
+    <!-- Problem -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+    <div class="row section-head">
+      <div class="col col-wrapper">
+        <div class="section-title">ANN Search as a Ray Tracing Problem</div>
+      </div>
+    </div>
+    <div class="row section-item">
+      <div class="col col-wrapper">
+<p>
+In <a href="https://developer.nvidia.com/discover/ray-tracing">ray tracing</a>, rays are cast from the camera through each pixel of the projected image into a virtual scene of 
+objects. Ray tracing engines simulate object interactions in the scene to render pixels with 
+accurate colors. Here, we will construct a scene of spheres during the offline step and cast rays toward them during the online step. 
+</p>
+<p>
+During offline scene construction, we fix the subspace dimensionality to $d=2$ and hence 
+the number of subspaces is $m=D/d$. In each subspace, we train $c$ cluster centroids using 
+<a href="https://en.wikipedia.org/wiki/K-means_clustering">$k$-means</a> and create corresponding 
+spheres ($m \times c$ in total) which encapsulate $r$-neighborhoods of candidate search points. We fix the subspace dimensionality to 
+create an interpretable scene: dimensions $1, 2$ correspond to $x, y$ coordinates of the cluster centroid and sphere. 
+The $z$-dimension is chosen such that spheres do not overlap between subspaces. Finally, to accelerate scene traversal time, 
+we construct a <a href="https://en.wikipedia.org/wiki/Bounding_volume_hierarchy">Bounding Volume Hierarchy</a> on the sphere scene,
+allowing us to rapidly prune the candidate search space at runtime.
+</p>
+<p>
+During online search, A query $q_j \in \mathbb{R}^D$ is decomposed into $q_{j0}, q_{j1}, \dots, q_{jm} \in \mathbb{R}^d$. 
+Since $d=2$, the components of the query subvector in a given subspace are the $x, y$ coordinates for the corresponding ray. 
+We generate a ray for each subspace and cast them into their respective subspace scenes. 
+A first-stage candidate set is generated by taking the union of points contained in the
+intersected spheres across all subspaces. Intuitively, we only consider in each subspace points no
+more than a distance of $r$ from the sphere centroid as if a point is encapsulated in an intersected $r$-neighborhood, 
+then it is likely a good nearest-neighbor canadidate. The final candidate set is generated by selecting from the 
+first-stage set the closest $R$ points to $q_j$, through selective distance accumulation.
+</p>
+        </div>
+      </div>
+    </div>
+    <!-- Problem -->
+
+
+    <!-- Applications -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Applications</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+The core application is accelerating approximate nearest neighbor search for text embeddings, some of which 
+exhibit these sparse, high-dimensional characteristics. As a result, our algorithm is widely applicable to semantic search 
+which finds documents that are conceptually similar to a query beyond keyword matching, recommendation systems 
+which suggest related products, articles, or videos based on user preferences, and question answering systems which 
+identify the most relevant passage in a document to answer a given question. It is useful in any scenario in which we want to 
+quickly query the embedding space!
+</p>
+        </div>
+      </div>
+    </div>
+  <!-- Applications -->
+
+
+  <!-- Related Readings -->
+    <div class="sec-wrapper blog-sec-wrapper" id="references">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Related Readings</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+          <div>An Approximate Algorithm for Maximum Inner Product Search over Streaming Sparse Vectors
+          [<a href="https://arxiv.org/abs/2301.10622">Paper</a>]</div>
+          <div>Billion-scale Similarity Search with GPUs
+          [<a href="https://arxiv.org/abs/1702.08734">Paper</a>]
+          [<a href="https://github.com/facebookresearch/faiss">Code</a>]
+          </div>
+          <div>DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node
+          [<a href="https://proceedings.neurips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf">Paper</a>]
+          [<a href="https://www.microsoft.com/en-us/research/video/research-talk-approximate-nearest-neighbor-search-systems-at-scale/"]>Video</a>]
+          [<a href="https://cvpr.thecvf.com/media/cvpr-2023/Slides/18545_SzZdLZD.pdf">Slides 1</a>]
+          [<a href="https://jshun.csail.mit.edu/6506-s24/lectures/lecture21-2.pdf">Slides 2</a>]
+          <div>Product Quantization for Nearest Neighbor Search
+          [<a href="https://ieeexplore.ieee.org/document/5432202">Paper</a>]
+          </div>
+          <div>Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs
+          [<a href="https://arxiv.org/ftp/arxiv/papers/1603/1603.09320.pdf">Paper</a>]
+          [<a href="https://github.com/nmslib/hnswlib">Code</a>]
+          </div>
+          <div>Worst-case Performance of Popular Approximate Nearest Neighbor Search Implementations: Guarantees and Limitations 
+          [<a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/d0ac28b79816b51124fcc804b2496a36-Paper-Conference.pdf">Paper</a>]
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- Related Readings -->
+
+  <!-- Footer -->
+    <footer class="citation col-wrapper">
+      <p>
+        Copyright &copy; <span id="year"></span> Harrison Zhang
+        <i class="bi bi-dot"></i>
+        <a href="https://accessibility.huit.harvard.edu">Accessibility</a>
+      </p>
+    </footer>
+
+  </div>
+
+</body>
+
+<script defer src="blog-script.js"></script>
+
+</html>

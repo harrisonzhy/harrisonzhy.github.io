@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+
+  <meta name="description" content="Blog .">
+  <meta name="author" content="Harrison Zhang">
+  <meta name="keywords" content="LLM Sparsity,Activation Sparsity,Neural Processing Unit,AI Hardware,AI Accelerator,NPU,Co-design">
+
+  <title>Harrison Zhang</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Academicons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <!-- My CSS -->
+  <link href="../css/blog-style.css" rel="stylesheet">
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <!-- clipboard.js -->
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
+
+</head>
+
+<body>
+
+  <div class="container-fluid">
+
+    <!-- Title -->
+    <div class="sec-wrapper blog-wrapper" id="title">
+      <div class="row align-items-center">
+        <div class="col-sm col-wrapper">
+          <div class="description">
+            <div class="name">Exploiting Activation Sparsity for Efficient LLM Serving on Neural Processing Units</div>
+            <div class="blog-author">
+              <me>Harrison Zhang</me>
+            </div>
+            <div class="highlight">
+              AMD 
+            </div>
+            <div class="highlight">
+              Research and Advanced Development / AI Silicon Group
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Title -->
+
+    <!-- Abstract -->
+    <div class="sec-wrapper blog-sec-wrapper" id="abstract">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">tl;dr</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+We prototype sparsity-awareness from zero on existing AMD neural processing unit (NPU) 
+<a href="https://www.amd.com/en/technologies/xdna.html">XDNA 1-2 fabric</a> for I/O performance gain. 
+By purely alleviating memory I/O, we show up to ~1.59x improvement in 
+FFN throughput which translates to ~1.25x increase in end-to-end token generation throughput. 
+Our approach is generalizable to existing models such as Meta AI OPT-6.7B, Mixtral-8x22B, ReluFalcon-40B,
+and scalable to upcoming AMD NPU architectures optimized toward LLM workloads.
+        </div>
+      </div>
+    </div>
+    <!-- Abstract -->
+
+
+    <!-- Introduction -->
+    <div class="sec-wrapper blog-sec-wrapper" id="motivation">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Introduction</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+Billion-parameter Large Language Models (LLMs) have revolutionized various AI applications. However, their computational demand 
+for query serving present significant challenges for deployment on resource-limited devices, e.g. commodity workstations.
+Therefore, there has been great interest in <a href="https://arxiv.org/abs/2310.04564">ReLU-fication</a>  
+as it offers minimal impact on model training convergence and online accuracy performance,
+while introducing up to 95% exploitable activation sparsity. Now, we aim to translate the newfound activation sparsity 
+into tangible performance gain in the form of high token generation throughput. 
+        </div>
+      </div>
+    </div>
+    <!-- Introduction  -->
+
+
+    <!-- Enhancement -->
+    <div class="sec-wrapper blog-sec-wrapper" id="enhancement">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Enhancement</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+Many works aim to reduce the computational (FLOPs) requirements during inference. However, it is known that LLM serving is memory-bound. 
+Therefore, we orthogonally focus on I/O reduction. Layerwise in the ReLU-fied architecture, the FFN features up projection clipped
+by ReLU and fed into down projection, resulting in a sparse-vector GeMV. Given a DMA buffer descriptor encoding a weight matrix transfer, we decompose and selectively load rows 
+that correspond to activated elements in the sparse up projection to realize I/O performance gain.
+</p>
+        </div>
+      </div>
+    </div>
+    <!-- Enhancement -->
+
+
+    <!-- Fabric Integration -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+    <div class="row section-head">
+      <div class="col col-wrapper">
+        <div class="section-title">Fabric Integration</div>
+      </div>
+    </div>
+    <div class="row section-item">
+      <div class="col col-wrapper">
+<p>
+We work toward integrating this functionality on existing NPU dataflow in three phases.
+In Phase 0, we program the <a href="https://www.amd.com/en/products/adaptive-socs-and-fpgas/technologies/ai-engine.html">AIE array</a> 
+using <a href="https://github.com/Xilinx/mlir-aie">IRON toolchain</a> to identify an upper-bound speedup ratio, which is near-linear. 
+In Phase 1, we co-design our application testbench with internal task token synchronization to integrate 
+the enhancement for alternating sparsity patterns into the existing XDNA 1-2 fabric. (This is the worst-case pattern as rows cannot be packed into fewer BDs). 
+Directly extendable, Phase 2 is left as future work and identifies the end-to-end latency of online BD generation and execution.
+Our main contribution lies in the layer-wise upper- and lower-bound token generation performance gains afforded by Phase 0 and Phase 1, and thus scales with model depth.
+Even with sparse descriptor (under) utilization under the worst-case activation pattern, we demonstrate a ~1.59x improvement in FFN throughput, which translates 
+to ~1.25x increase in end-to-end token generation throughput according to our in-house hardware dataflow-model architecture mapper.  
+Moreover, internal benchmarks reveal that DMA descriptor execution and hence our identified 
+performance gains are bottlenecked by the single control processor, which is expected to change in future NPU iterations. 
+</p>
+<p>
+Currently, we underutilize DMA descriptors as we statically created BDs for each row but discarded them during runtime if they correspond to 
+an inactivated element, thus preventing reuse within the current batch of activated rows. Moreover, the activation vector pattern remains fixed. Nevertheless, 
+this gives us a lower-bound performance gain, and it shows our enhancement is feasible to integrate in next-generation architectures such as XDNA 4+ which features 
+per-AIE-column control processors. Our approach is independent, modular and compatible with speculative decoding, W4A8KV4 and accumulator aware quantization, 
+and <a href="https://hanlab.mit.edu">many more</a>! Therefore, we expect speedup ratios on XDNA 4+ to be closer to that of Phase 0 (i.e. near-linear). 
+</p>
+        </div>
+      </div>
+    </div>
+  <!-- Fabric Integration -->
+
+
+    <!-- Applications -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Applications</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+The most salient application is accelerating foundation model serving on commodity workstations equipped with <a href="https://www.amd.com/en/products/processors/consumer/ryzen-ai.html">Ryzen AI</a>. 
+Looking to <a href="https://techcommunity.microsoft.com/discussions/azure-ai-services/building-multi-agentic-workflows-in-autogen-studio-a-low-code-platform/4179253">agentic workflow platforms</a> 
+by Microsoft Research, this has great potential for Mixture of Expert (MoE) serving as experts are hierarchical MoEs and use FFNs at the core. Lower-level weight fetching is on-demand, 
+and there is little model gating or routing in lower levels, so weights are frequently not preloaded.
+</p>
+        </div>
+      </div>
+    </div>
+  <!-- Applications -->
+
+
+  <!-- Related Readings -->
+    <div class="sec-wrapper blog-sec-wrapper" id="references">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Related Readings</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+          <div>ReLU Strikes Back: Exploiting Activation Sparsity in Large Language Models
+          [<a href="https://arxiv.org/abs/2310.04564">Paper</a>][<a href="https://imirzadeh.me/publication/relu-act-sparse/poster.pdf">Poster</a>]</div>
+          <div>ProSparse: Introducing and Enhancing Intrinsic Activation Sparsity within Large Language Models
+          [<a href="https://arxiv.org/abs/2402.13516">Paper</a>]
+          </div>
+          <div>Training-Free Activation Sparsity in Large Language Models
+          [<a href="https://arxiv.org/abs/2408.14690">Paper</a>][<a href="https://www.together.ai/blog/teal-training-free-activation-sparsity-in-large-language-models">Blog</a>]
+          <div>CATS: Contextually-Aware Thresholding for Sparsity in Large Language Models
+          [<a href="https://arxiv.org/abs/2404.08763">Paper</a>]
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Related Readings -->
+    
+    <!-- Footer -->
+    <footer class="citation col-wrapper">
+      <p>
+        Copyright &copy; <span id="year"></span> Harrison Zhang
+        <i class="bi bi-dot"></i>
+        <a href="https://accessibility.huit.harvard.edu">Accessibility</a>
+      </p>
+    </footer>
+
+  </div>
+
+</body>
+
+<script defer src="blog-script.js"></script>
+
+</html>

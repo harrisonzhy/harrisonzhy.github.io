@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+
+  <meta name="description" content="Blog">
+  <meta name="author" content="Harrison Zhang">
+  <meta name="keywords" content="General Purpose Grasping,Robotic Grasping,Robotic Manipulation,Grasp Affordances,Affordance,GraspNet,2D Gaussian Splatting,Asset Reconstruction,TSDF">
+
+  <title>Harrison Zhang</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Academicons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <!-- My CSS -->
+  <link href="../css/blog-style.css" rel="stylesheet">
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    });
+  </script>
+      
+  <script type="text/javascript"
+          src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+</head>
+
+<body>
+
+  <div class="container-fluid">
+
+    <!-- Title -->
+    <div class="sec-wrapper blog-wrapper" id="title">
+      <div class="row align-items-center">
+        <div class="col-sm col-wrapper">
+          <div class="description">
+            <div class="name">Booting Chickadee on Chickadee: Extending Kernel-based Virtual Machine Capabilities to Chickadee OS</div>
+            <div class="blog-author">
+              <me>Harrison Zhang</me>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Title -->
+
+
+    <!-- Context -->
+    <div class="sec-wrapper blog-sec-wrapper" id="enhancement">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Context</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+Work done as final project for <a href="https://read.seas.harvard.edu/cs161/2024/">CS 161 (Operating Systems)</a> at Harvard University.
+</p>
+        </div>
+      </div>
+    </div>
+    <!-- Context ->
+
+
+    <!-- Abstract -->
+    <div class="sec-wrapper blog-sec-wrapper" id="abstract">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">tl;dr</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+We build <a href="https://en.wikipedia.org/wiki/Kernel-based_Virtual_Machine">kernel-based virtual machine (KVM)</a> 
+capabilities from scratch on the Chickadee Operating System (Chickadee OS) using 
+<a href="https://en.wikipedia.org/wiki/X86_virtualization#Intel_virtualization_(VT-x)">Intel VT-x virtualization extensions</a> 
+according to the 
+<a href="https://www.intel.com/content/www/us/en/support/articles/000006715/processors.html">Intel 64 and IA-32 Architectures Software Developer's Manual</a> (Volume 3C). 
+We develop VM control structures, 
+guest <a href="https://en.wikipedia.org/wiki/Second_Level_Address_Translation">Extended Pagetable (EPT) address translation</a>, 
+exception handling, 
+<a href="https://www.intel.com/content/www/us/en/docs/programmable/683620/current/trap-instruction.html">instruction trapping</a>, 
+virtual CPU (vCPU) abstraction for 64-bit guests, and subsequently boot Chickadee on Chickadee.
+        </div>
+      </div>
+    </div>
+    <!-- Abstract -->
+
+    <!-- Introduction -->
+    <div class="sec-wrapper blog-sec-wrapper" id="enhancement">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Introduction</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+This project develops KVM capabilities on Chickadee OS, affording hypervisor role, and boots a second Chickadee OS image as a guest VM. 
+We use a Microsoft Azure D4sv3 machine running Ubuntu 22.04 with Intel VT-x virtualization extension technology. Chickadee is subsequently emulated 
+on <a href="https://www.qemu.org">QEMU</a> within a <a href="https://www.docker.com">Docker</a> container. Within the Chickadee emulation, we 
+boot another image of Chickadee as a guest virtual machine (VM).
+</p>
+        </div>
+      </div>
+    </div>
+    <!-- Introduction -->
+
+
+    <!-- VM Overview -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+        <div class="row section-head">
+          <div class="col col-wrapper">
+            <div class="section-title">VM Overview</div>
+          </div>
+        </div>
+        <div class="row section-item">
+          <div class="col col-wrapper">
+<p>
+If Intel VT-x virtualization is supported and enabled, the system proceeds with VM initialization. 
+Otherwise, the calling process is terminated. Upon successful 
+<a href="https://en.wikipedia.org/wiki/Control_register">processor control field</a> setup and memory allocation 
+for VM control structures and guest stack, the VM is launched, Chickadee is booted, the initial user process is 
+set up, and virtual CPU (vCPU) structures are initialized and mapped to real CPUs. Finally, the stack pointer is adjusted, 
+and the initial process is scheduled on a vCPU.
+
+During a $\texttt{vmexit}$, whether triggered by a privileged instruction or an error, control transitions to 
+the <a href="https://en.wikipedia.org/wiki/Hypervisor">hypervisor</a>. The hypervisor manages the situation by handling the error, emulating, or skipping the 
+instruction, and then invoking $\texttt{vmresume}$ to continue execution. 
+In cases where the $\texttt{vmexit}$ condition is unhandled or the issue is critical (e.g., a triple fault), 
+the system enters an emergency spin state to prevent further errors.
+</p>
+</div>
+          </div>
+        </div>
+    <!-- VM Overview -->
+
+
+    <!-- Execution Control Field -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+        <div class="row section-head">
+          <div class="col col-wrapper">
+            <div class="section-title">Execution Control Field</div>
+          </div>
+        </div>
+        <div class="row section-item">
+          <div class="col col-wrapper">
+<p>
+On VM initialization, we set up VM control structure (VMCS) region, set the revision ID from 
+<a href="https://en.wikipedia.org/wiki/Model-specific_register">model-specific registers</a> (MSRs), and 
+$\texttt{vmptrld}$ the physical VM region. We initialize key control fields in the VMCS, configuring the 
+execution environment including pin-based and processor-based execution controls, support for Extended Page Tables (EPT) if available, 
+and exception handling via exception bitmap to determine which exceptions cause VM exits. We manage page fault handling 
+and set VM entry and exit controls to support 64-bit guest and host modes. 
+Additionally, we initialize control register masks and 
+<a href="https://stackoverflow.com/questions/9832140/what-exactly-do-shadow-page-tables-for-vmms-do">read shadows</a> 
+to regulate access to CPU control registers in the guest context. 
+These steps ensure efficient and isolated operation and controlled interaction with hardware resources.
+</p>
+</div>
+          </div>
+        </div>
+    <!-- Execution Control Field -->
+
+
+    <!-- Hypervisor Initialization -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Hypervisor Initialization</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+The next step is to initialize the host-state region of the VMCS, which configures the system state to 
+transition back to the host upon a VM exit event. First, we clear the lower three bits of the 
+<a href="https://wiki.osdev.org/Segment_Selector">segment selectors</a> (ES, CS, SS, DS, FS, GS, and TR) according to Intel specification. 
+Depending on the VM exit controls, we conditionally write MSR values for <a href="https://wiki.osdev.org/CPU_Registers_x86-64">CPU registers</a> IA32_PAT (Page Attribute Table), 
+IA32_EFER (Extended Feature Enable Register), and IA32_PERF_GLOBAL_CTRL (Performance Monitoring Control) to the host-state area. 
+Next, we write to the VMCS control register (cr0, cr3, cr4) values and FS and GS base addresses, as well as 
+<a href="https://wiki.osdev.org/Global_Descriptor_Table">global descriptor table (GDT)</a>, 
+<a href="https://wiki.osdev.org/Interrupt_Descriptor_Table">interrupt descriptor table (IDT)</a>, 
+and 
+<a href="https://wiki.osdev.org/Task_State_Segment">task state segment (TSS)</a> 
+base addresses with their respective descriptors. We set up system call-related MSRs IA32_SYSENTER_ESP, IA32_SYSENTER_EIP, and IA32_SYSENTER_CS. 
+To ensure seamless transition to host environment after VM exit event, the host instruction pointer is set to the 
+VMM (virtual machine monitor) or hypervisor entry point.
+</p>
+</div>
+        </div>
+      </div>
+  <!-- Hypervisor Initialization -->
+
+
+  <!-- Guest Initialization -->
+      <div class="sec-wrapper blog-sec-wrapper" id="integration">
+        <div class="row section-head">
+          <div class="col col-wrapper">
+            <div class="section-title">Guest Initialization</div>
+          </div>
+        </div>
+        <div class="row section-item">
+          <div class="col col-wrapper">
+  <p>
+The last step before VM boot configuration is initializing the guest-state area of the VMCS, which includes 
+mirroring key segment selectors, control registers, and MSRs from the host state, 
+configuring segment limits and access rights, and setting up the GDT, IDT, and TSS base addresses. 
+We allocate guest stack, set the guest instruction pointer and stack pointer, and configures system call MSRs. 
+This step finalizes the guest control and execution context. Afterward, we immediately jump to the Chickadee boot sequence.
+  </p>
+  </div>
+          </div>
+        </div>
+  <!-- Guest Initialization -->
+
+
+  <!-- Chickadee on Chickadee-->
+  <div class="sec-wrapper blog-sec-wrapper" id="integration">
+    <div class="row section-head">
+      <div class="col col-wrapper">
+        <div class="section-title">Chickadee on Chickadee</div>
+      </div>
+    </div>
+    <div class="row section-item">
+      <div class="col col-wrapper">
+<p>
+To boot Chickadee on Chickadee, the kernel's 
+<a href="https://en.wikipedia.org/wiki/Executable_and_Linkable_Format">ELF</a> header is verified by reading the first page from disk 
+and checking its magic number for validity. Next, we invoke the custom bootloader 
+(as Chickadee does not follow the <a href="https://wiki.osdev.org/El-Torito">El Torito</a> standard) and set up the guest stack pointer to 
+the top of CPU state page for the first vCPU. We launch the VM kernel, which continues 
+vCPU initialization by enabling interrupt requests and further initializing vCPU state. 
+Finally, we create guest page directory and pagetable hierarchy, set the EPT pointer to enable VM-VMM pagetable mapping, 
+and enqueue the first VM process on a vCPU, which is mapped to and executed on a real CPU.
+</p>
+  </div>
+          </div>
+        </div>
+  <!-- Chickadee on Chickadee-->
+
+
+  <!-- Applications -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Applications</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+One of the best applications is in teaching virtualization concepts, OS and kernel development, and VM-VMM interaction. 
+Moreover, as a lightweight prototype, this project can even be applied in research for creating lightweight virtualized environments, 
+enhancing security through isolation, exploring new hypervisor features, and developing efficient virtualization frameworks.
+</p>
+        </div>
+      </div>
+    </div>
+  <!-- Applications -->
+
+
+  <!-- Related Readings -->
+    <div class="sec-wrapper blog-sec-wrapper" id="references">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Related Readings</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+          <div>
+          Linux Kernel-based Virtual Machine
+          [<a href="https://linux-kvm.org/page/Main_Page">Website</a>]
+          </div>
+          <div>
+          Intel 64 and IA-32 Architectures Software Developer Manual
+          [<a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"]>Website</a>]
+          </div>
+          <div>
+          Linux Virtual Machine Control Structure Layout
+          [<a href="https://github.com/intel/ikgt-core/blob/master/core/include/hw/vmx_vmcs.h">Code</a>]
+          </div>
+          <div>
+          VM-execution Control Fields
+          [<a href="https://xem.github.io/minix86/manual/intel-x86-and-64-manual-vol3/o_fe12b1e2a880e0ce-1058.html">Excerpt</a>]
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- Related Readings -->
+
+  <!-- Footer -->
+    <footer class="citation col-wrapper">
+      <p>
+        Copyright &copy; <span id="year"></span> Harrison Zhang
+        <i class="bi bi-dot"></i>
+        <a href="https://accessibility.huit.harvard.edu">Accessibility</a>
+      </p>
+    </footer>
+
+  </div>
+
+</body>
+
+<script defer src="blog-script.js"></script>
+
+</html>

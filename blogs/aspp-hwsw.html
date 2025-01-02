@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+
+  <meta name="description" content="Blog">
+  <meta name="author" content="Harrison Zhang">
+  <meta name="keywords" content="General Purpose Grasping,Robotic Grasping,Robotic Manipulation,Grasp Affordances,Affordance,GraspNet,2D Gaussian Splatting,Asset Reconstruction,TSDF">
+
+  <title>Harrison Zhang</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Academicons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <!-- My CSS -->
+  <link href="../css/blog-style.css" rel="stylesheet">
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    });
+  </script>
+      
+  <script type="text/javascript"
+          src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+</head>
+
+<body>
+
+  <div class="container-fluid">
+
+    <!-- Title -->
+    <div class="sec-wrapper blog-wrapper" id="title">
+      <div class="row align-items-center">
+        <div class="col-sm col-wrapper">
+          <div class="description">
+            <div class="name">Leveraging Structured Sparsity in Dilated Architectures for Energy-Efficient AI Accelerators</div>
+            <div class="blog-author">
+              Mehek Gosalia*,
+              <me>Harrison Zhang</me>*
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Title -->
+
+
+    <!-- Context -->
+    <div class="sec-wrapper blog-sec-wrapper" id="enhancement">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Context</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+Work done as small-scale project for <a href="https://csg.csail.mit.edu/6.5930/">6.5930 (Graduate Hardware Architecture for Deep Learning)</a> at MIT.
+</p>
+        </div>
+      </div>
+    </div>
+    <!-- Context ->
+
+
+    <!-- Abstract -->
+    <div class="sec-wrapper blog-sec-wrapper" id="abstract">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">tl;dr</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+We perform a comprehensive performance survey of AI accelerators on sparse dilated architectures, identify 
+bottlenecking areas for energy efficiency and propose a dilated kernel decomposition technique to accelerate Atrous convolutional workloads on 
+the <a href="https://research.nvidia.com/publication/2016-06_eyeriss-spatial-architecture-energy-efficient-dataflow-convolutional-neural">NVIDIA Eyeriss</a> 
+accelerator. On Eyeriss simulation with <a href="http://accelergy.mit.edu/tutorial.html">Timeloop/Accelergy</a>, 
+our technique achieves ~17% reduction in total access energy on the <a href="https://arxiv.org/abs/1706.05587">DeepLabv3</a> model architecture, 
+highlighting the promise of exploiting kernel structured-sparsity for increased energy efficiency on existing AI accelerators.
+        </div>
+      </div>
+    </div>
+    <!-- Abstract -->
+
+    <!-- Introduction -->
+    <div class="sec-wrapper blog-sec-wrapper" id="enhancement">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Introduction</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+AI accelerators have emerged as invaluable tools for achieving energy-efficient inference on deep convolutional  
+networks (CNNs). However, large-scale CNN inference in modern AI systems brings challenges in energy efficiency 
+to underlying hardware as they require significant data movement between on- and off-chip memory, which is often more energy-consuming 
+than computation. Therefore, there has been great interest in developing structured dataflows which minimize total data movement cost.
+We show that existing accelertor architectures fail to exploit structured kernel sparsity characteristic of dilated convolutions, and 
+demonstrate using DeepLabv3 model architecture that incorporating dilated kernel decomposition into computation mapping configuration 
+achieves ~17% reduction in total access energy on the existing Eyeriss accelerator.
+</p>
+        </div>
+      </div>
+    </div>
+    <!-- Introduction -->
+
+
+    <!-- Atrous Convolutions -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+        <div class="row section-head">
+          <div class="col col-wrapper">
+            <div class="section-title">Atrous Convolutions</div>
+          </div>
+        </div>
+        <div class="row section-item">
+          <div class="col col-wrapper">
+<p>
+<a href="https://arxiv.org/abs/1511.07122">Atrous architectures</a>, also known as dilated convolutions, are a type of convolution operation used in 
+deep learning to expand the receptive field without increasing the number of parameters or reducing spatial resolution. 
+A dilation rate introduces zero-padding between filter elements, allowing the convolution to capture broader signal context. 
+Atrous convolutions are useful in tasks like semantic segmentation, where understanding long-range dependencies is critical. 
+By preserving spatial resolution, they enable efficient feature extraction at multiple scales. 
+In <a href="https://en.wikipedia.org/wiki/Einstein_notation">Einsum</a> notation, an Atrous convolution is:
+$$ { \mathbf{O}\left[ n,m,x,y \right] = \text{ReLU} \left(  \sum_{c,r,s}\mathbf{I}\left[ n,c,Ux+Dr,Yy+Ds \right] + \mathbf{W}\left[ m,c,r,s \right] \right) } $$
+</p>
+where lowercase indicates an index between $0$ inclusive and the corresponding uppercase definition exclusive:
+$$ { \begin{array}{|c|l|}
+\hline
+N & \text{Number of inputs (batch size)} \\ \hline
+C & \text{Number of input channels in feature map} \\ \hline
+H & \text{Height of input feature map} \\ \hline
+W & \text{Width of input feature map} \\ \hline
+M & \text{Number of output channels (filters)} \\ \hline
+X & \text{Width of output feature map: } X = (W - S + U)/U \\ \hline
+Y & \text{Height of output feature map: } Y = (H - R + U)/U \\ \hline
+R & \text{Effective kernel height (after dilation): } R = D(R_{\text{original}} - 1) + 1 \\ \hline
+S & \text{Effective kernel width (after dilation): } S = D(S_{\text{original}} - 1) + 1 \\ \hline
+D & \text{Dilation factor} \\ \hline
+U & \text{Stride size} \\ \hline
+\end{array} } $$
+</div>
+          </div>
+        </div>
+    <!-- Atrous Convolutions -->
+
+
+    <!-- DeepLabv3 -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">DeepLabv3 Architecture</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+DeepLabv3 is a popular architecture used for receptive field (context) broadening in semantic segmentation techniques. 
+The model architecture composes ResNet50, <a href="https://arxiv.org/abs/1606.00915">Atrous Spatial Pyramid Pooling (ASPP)</a> block, and a final vanilla convolution layer. 
+To generate an equivalent architecture with dense convolutions, we decompose the ASPP layers into a series of dense 
+vanilla convolutions involving only the dense kernel sub-tiles by omitting dilation padding and adjusting edge padding to preserve 
+the padding correspondence with the operand data. Focusing on these layers, we analyze fJ/Compute metrics across various accelerator 
+designs on the dilated and dense model variants.
+</p>
+</div>
+        </div>
+      </div>
+  <!-- DeepLabv3 -->
+
+
+  <!-- Weight, Output Stationary -->
+  <div class="sec-wrapper blog-sec-wrapper" id="integration">
+    <div class="row section-head">
+      <div class="col col-wrapper">
+        <div class="section-title">Weight Stationary (WS) and Output Stationary (OS)</div>
+      </div>
+    </div>
+    <div class="row section-item">
+      <div class="col col-wrapper">
+<p>
+On a <a href="https://eems.mit.edu/wp-content/uploads/2019/06/Tutorial-on-DNN-05-DNN-Accelerator-Architectures.pdf">pure WS accelerator</a>, 
+each kernel weight remains stationary in the register file (RF) to maximize convolutional and 
+kernel reuse. Evaluating the dense and dilated workloads, we observe most energy consumption originates from 
+shared global buffer I/O as it is used to store intermediate results (e.g. partial sums). Therefore, 
+it quickly becomes a bottleneck during large model inference. However, in pointwise convolution step of ASPP, the DRAM access energy 
+cost dominates in the dilated passthrough to over 1.5x the dense passthrough. As the WS architecture does not 
+skip null computations introduced by kernel dilation, we attribute this cost to the increase in DRAM accesses.
+Evaluating dilated and dense model workloads on a 
+<a href="https://eems.mit.edu/wp-content/uploads/2019/06/Tutorial-on-DNN-05-DNN-Accelerator-Architectures.pdf">pure OS accelerator</a>, 
+we observe that DRAM accesses are the most significant contributor to energy usage due to suboptimal reuse patterns for inputs and weights. 
+Additionally, since the on-chip buffer capacity is insufficient to hold all partial sum intermediates for larger outputs, 
+they are spilled to DRAM, further increasing energy consumption.
+</p>
+  </div>
+          </div>
+        </div>
+  <!-- Weight, Output Stationary -->
+
+
+  <!-- Row Stationary -->
+  <div class="sec-wrapper blog-sec-wrapper" id="integration">
+    <div class="row section-head">
+      <div class="col col-wrapper">
+        <div class="section-title">Row Stationary</div>
+      </div>
+    </div>
+    <div class="row section-item">
+      <div class="col col-wrapper">
+<p>
+Eyeriss addresses suboptimal reuse in the WS and OS regimes by proposing row stationary dataflow, 
+which keeps rows in RF and implicitly regularizes global buffer and DRAM usage, reducing 
+total energy usage by an order of magnitude. For dilated passthrough, we observe that DRAM accesses are still 
+the main contributor to energy usage. However, with the row stationary dataflow, the dense workload consistently demonstrates 
+significantly less DRAM access energy usage across all layers of ASPP. 
+With dilated kernel decomposition, the dense variant achieves ~17% reduction in total energy usage, 
+highlighting the promise of exploiting kernel structured-sparsity for increased energy efficiency on existing AI accelerators.
+</p>
+  </div>
+          </div>
+        </div>
+    <!-- Row Stationary -->
+
+
+  <!-- Applications -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Applications</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+The most prominent application is dilated workloads: Atrous architectures are popular in semantic segmentation for enhancing network receptive field without 
+introducing excessive computation overhead or losing information. More generally, we work toward reducing energy consumption in AI accelerators by introducing awareness of kernel structured-sparsity. 
+While Eyeriss is specialized for CNN workloads, our approach is relevant to more generalized AI hardware, e.g. 
+<a href="https://research.google/pubs/in-datacenter-performance-analysis-of-a-tensor-processing-unit/">Tensor Processing Units (TPUs)</a> and 
+Neural Processing Units (NPUs), and especially in <a href="https://ieeexplore.ieee.org/document/8686088">edge scenarios</a> where energy-efficiency is critical.
+</p>
+        </div>
+      </div>
+    </div>
+  <!-- Applications -->
+
+
+  <!-- Related Readings -->
+    <div class="sec-wrapper blog-sec-wrapper" id="references">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Related Readings</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+          <div>
+          Eyeriss: An Energy-Efficient Reconfigurable Accelerator for Deep Convolutional Neural Networks
+          [<a href="https://eyeriss.mit.edu">Homepage</a>]
+          [<a href="https://ieeexplore.ieee.org/document/7418007">Paper</a>]
+          </div>
+          <div>
+          Eyeriss v2: A Flexible Accelerator for Emerging Deep Neural Networks on Mobile Devices
+          [<a href="https://ieeexplore.ieee.org/document/8686088"]>Paper</a>]
+          </div>
+          <div>
+          Simba: Scaling Deep-Learning Inference with Multi-Chip-Module-Based Architecture
+          [<a href="https://people.eecs.berkeley.edu/~ysshao/assets/papers/shao2019-micro.pdf"]>Paper</a>]
+          </div>
+          <div>
+          BETA: Binarized Energy-Efficient Transformer Accelerator at the Edge
+          [<a href="https://arxiv.org/abs/2401.11851"]>Paper</a>]
+          </div>
+          <div>
+          Benchmarking the Performance and Energy Efficiency of AI Accelerators for AI Training
+          [<a href="https://ieeexplore.ieee.org/document/9139681">Paper</a>]
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- Related Readings -->
+
+  <!-- Footer -->
+    <footer class="citation col-wrapper">
+      <p>
+        Copyright &copy; <span id="year"></span> Harrison Zhang
+        <i class="bi bi-dot"></i>
+        <a href="https://accessibility.huit.harvard.edu">Accessibility</a>
+      </p>
+    </footer>
+
+  </div>
+
+</body>
+
+<script defer src="blog-script.js"></script>
+
+</html>
