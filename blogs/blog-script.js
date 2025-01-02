@@ -9,8 +9,8 @@ moreContent.addEventListener("shown.bs.collapse", function() {
 
 var counter = 0;
 var hoverImages = [
-  "../assets/profile/cuda.webp",
-  "../assets/profile/mcflurry.webp",
+  "../assets/profile/helmet.webp",
+  "../assets/profile/cards.webp",
 ];
 
 var profile_credit = document.getElementById("profile-credit");
