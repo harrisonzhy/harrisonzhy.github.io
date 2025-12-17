@@ -54,8 +54,8 @@
           <div class="description">
             <div class="name">Leveraging Structured Sparsity in Dilated Architectures for Energy-Efficient AI Accelerators</div>
             <div class="blog-author">
-              Mehek Gosalia*,
-              <me>Harrison Zhang</me>*
+              <me>Harrison Zhang</me>*,
+              Mehek Gosalia*
             </div>
           </div>
         </div>
@@ -74,7 +74,7 @@
       <div class="row section-item">
         <div class="col col-wrapper">
 <p>
-Work done as small-scale project for <a href="https://csg.csail.mit.edu/6.5930/">6.5930 (Graduate Hardware Architecture for Deep Learning)</a> at MIT.
+Work done as final project for <a href="https://csg.csail.mit.edu/6.5930/">6.5930 (Graduate Hardware Architecture for Deep Learning)</a> at MIT.
 </p>
         </div>
       </div>
@@ -144,21 +144,11 @@ By preserving spatial resolution, they enable efficient feature extraction at mu
 In <a href="https://en.wikipedia.org/wiki/Einstein_notation">Einsum</a> notation, an Atrous convolution is:
 $$ { \mathbf{O}\left[ n,m,x,y \right] = \text{ReLU} \left(  \sum_{c,r,s}\mathbf{I}\left[ n,c,Ux+Dr,Yy+Ds \right] + \mathbf{W}\left[ m,c,r,s \right] \right) } $$
 </p>
-where lowercase indicates an index between $0$ inclusive and the corresponding uppercase definition exclusive:
-$$ { \begin{array}{|c|l|}
-\hline
-N & \text{Number of inputs (batch size)} \\ \hline
-C & \text{Number of input channels in feature map} \\ \hline
-H & \text{Height of input feature map} \\ \hline
-W & \text{Width of input feature map} \\ \hline
-M & \text{Number of output channels (filters)} \\ \hline
-X & \text{Width of output feature map: } X = (W - S + U)/U \\ \hline
-Y & \text{Height of output feature map: } Y = (H - R + U)/U \\ \hline
-R & \text{Effective kernel height (after dilation): } R = D(R_{\text{original}} - 1) + 1 \\ \hline
-S & \text{Effective kernel width (after dilation): } S = D(S_{\text{original}} - 1) + 1 \\ \hline
-D & \text{Dilation factor} \\ \hline
-U & \text{Stride size} \\ \hline
-\end{array} } $$
+where lowercase indicates an index between $0$ inclusive and the corresponding uppercase definition exclusive.
+N is the number of inputs (batch size); C is the number of input channels; H and W are the height and width of the input feature map; M is the number of output channels (filters).
+The output feature map dimensions are X = (W - S + U) / U and Y = (H - R + U) / U.
+The effective kernel height is R = D(R_{original} - 1) + 1, and the effective kernel width is S = D(S_{original} - 1) + 1.
+Finally, D is the dilation factor and U is the stride size.
 </div>
           </div>
         </div>
