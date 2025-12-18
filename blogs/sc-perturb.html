@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+
+  <meta name="description" content="Blog">
+  <meta name="author" content="Harrison Zhang">
+
+  <title>Harrison Zhang</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Academicons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <!-- My CSS -->
+  <link href="../css/blog-style.css" rel="stylesheet">
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    });
+  </script>
+      
+  <script type="text/javascript"
+          src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+</head>
+
+<body>
+
+  <div class="container-fluid">
+
+    <!-- Title -->
+    <div class="sec-wrapper blog-wrapper" id="title">
+      <div class="row align-items-center">
+        <div class="col-sm col-wrapper">
+          <div class="description">
+            <div class="name">Single-Cell Perturbation Modeling with Guidance from Gene Regulatory Networks</div>
+            <div class="blog-author">
+              <me>Harrison Zhang</me>,
+              Tracy Chen,
+              Sonny Young
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Title -->
+
+
+    <!-- Context -->
+    <div class="sec-wrapper blog-sec-wrapper" id="enhancement">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Context</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+Work done as final project for 6.8700/HST.507[J] (Graduate Computational Biology)</a> at MIT.
+</p>
+        </div>
+      </div>
+    </div>
+    <!-- Context ->
+
+
+    <!-- Abstract -->
+    <div class="sec-wrapper blog-sec-wrapper" id="abstract">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">tl;dr</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+We introduce a simple, lightweight GRN-guided training framework for predicting single-cell transcriptional 
+responses to chemical perturbations across diverse cell types. Building on a strong perturbation 
+response predictor, we incorporate 
+<a href="https://en.wikipedia.org/wiki/Gene_regulatory_network">gene regulatory network (GRN)</a>
+structure through a fine-tuning stage that encourages predicted expression changes to align 
+with known regulatory interactions. This soft mechanistic prior delivers substantial improvements 
+over the base model in Overlap@N (+80.8%), Precision@N (+52.4%), and DE Spearman correlation (+12.4%). 
+These results demonstrate that integrating structured regulatory knowledge directly into model 
+learning can yield more accurate predictions of cellular responses.
+        </div>
+      </div>
+    </div>
+    <!-- Abstract -->
+
+    <!-- Introduction -->
+    <div class="sec-wrapper blog-sec-wrapper" id="enhancement">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Introduction</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+Modern single-cell perturbation assays now enable systematic measurement of how genetic and chemical interventions 
+change cellular transcriptional states at large scale. Despite this progress, accurately predicting transcriptional 
+responses in new cell types, contexts, or perturbations remains a central challenge in functional genomics and drug 
+discovery. Recent benchmarks have shown that deep learning models often fail to improve upon simple linear or mean 
+expression baselines, which suggests that they do not fully capture the underlying biological mechanisms that govern cellular response.
+</p>
+<p>
+A progression of methods, from lightweight models such as <a href="https://www.biorxiv.org/content/10.1101/2025.09.08.674873v1">ScAPE</a> 
+to diffusion based, variational, and transformer architectures including 
+<a href="https://www.biorxiv.org/content/10.1101/2021.04.14.439903v1">CPA</a>, 
+<a href="https://www.nature.com/articles/s41592-024-02201-0">scGPT</a>, and 
+<a href="https://arcinstitute.org/manuscripts/State">STATE</a>, 
+has steadily increased improved performance on several perturbation datasets. However, their improvements 
+remain modest. Moreover, most approaches that perform better treat perturbation prediction as a 
+<a href="https://arcinstitute.org/news/virtual-cell-challenge-2025-wrap-up">high dimensional regression problem</a> 
+, which is inherently not interpretable or generalizable. Thus, we ask whether encoding biological 
+structure (specifically from gene regulatory networks) into the learning process can improve 
+prediction of transcriptional responses while maintaining biological interpretability.
+</p>
+        </div>
+      </div>
+    </div>
+    <!-- Introduction -->
+
+
+    <!-- Perturbation Prediction -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+        <div class="row section-head">
+          <div class="col col-wrapper">
+            <div class="section-title">Perturbation Prediction</div>
+          </div>
+        </div>
+        <div class="row section-item">
+          <div class="col col-wrapper">
+<p>
+In single-cell perturbation modeling, the central task is to predict the transcriptional response of a cell to 
+a specified genetic or chemical perturbation. Given a representation of the unperturbed cell state and a 
+description of the perturbation, the model outputs gene-level changes, typically a post-perturbation gene expression profile, 
+or log fold-changes relative to control. Performance is assessed in terms of generalization 
+to new cell types, contexts, and perturbations, i.e. accuracy in predicting which genes respond and how 
+strongly they respond. 
+</p>
+<p>
+To quantify performance, we use the metrics outlined by STATE and the 
+<a href="https://virtualcellchallenge.org">Virtual Cell Challenge (VCC)</a>. 
+DE Overlap@N measures how many of the top-k truly differentially expressed genes (DEGs) are recovered within the model's 
+top-k predictions. DE Precision@N instead quantifies the fraction of the model's top-k predicted DEGs that are 
+truly DE. MSE and MAE evaluate the magnitude error of predicted log fold-changes. DE Spearman computes the 
+Spearman rank correlation between predicted and true log fold-changes restricted to significantly DE genes, 
+capturing how well the model preserves the ordering of gene-level DE effects.
+</p>
+</div>
+          </div>
+        </div>
+    <!-- Perturbation Prediction -->
+
+
+    <!-- STATE -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">STATE Baseline</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+STATE is a large-scale foundation model for predicting transcriptional responses to genetic and chemical 
+perturbations at single-cell resolution. It is composed of two components. The State Transition (ST) 
+module learns how expression changes between perturbed and matched control cells, modeling perturbation-induced 
+differences in gene expression. The State Embedding (SE) module is trained on large observational single-cell 
+atlases and maps cells into context-rich embeddings that capture baseline cell identity and state. 
+During perturbation prediction, STATE combines the perturbation-aware ST module with these SE embeddings to 
+predict gene-level responses. Trained on hundreds of millions of cells, STATE achieves strong cross-cell-type 
+generalization, and thus, we adopt STATE-142M as a baseline reference model for benchmarking perturbation prediction.
+</p>
+</div>
+        </div>
+      </div>
+  <!-- STATE -->
+
+
+    <!-- GRN -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Gene Regulatory Network Inference</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+We obtain the working GRN by running inference with <a href="https://www.nature.com/articles/s41467-025-58699-1">scPRINT</a>, 
+a single-cell foundation model trained to infer gene-gene regulatory relationships from large-scale transcriptomic data. 
+Given single-cell expression profiles, scPRINT assigns an edge weight to each gene pair that reflects how strongly one 
+gene is inferred to influence the other, thereby defining a weighted gene regulatory network. In our setting, we run 
+scPRINT on exactly the set of genes for which we predict perturbation responses and use the resulting edge weights to 
+construct a GRN whose nodes align with the output space of STATE.
+</p>
+</div>
+        </div>
+      </div>
+  <!-- GRN -->
+
+
+    <!-- Post-hoc Smoothing -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Post-hoc Smoothing</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+We investigated two post-training methods, the first of which was post-hoc smoothing. Post-hoc smoothing 
+applies a graph-based diffusion operator directly to the final output of the transition model, the 
+predicted gene expression changes produced by the ST decoder head (the last linear projection from the 
+latent representation to the gene expression space). In this paradigm, all model parameters, remain frozen. 
+Only the decoded prediction vector is transformed using the structure of the GRN. 
+Given a GRN with adjacency matrix $A$ and degree matrix $D$, we construct the symmetric
+normalized graph Laplacian, which turns the GRN topology into an explicit, differentiable prior on 
+how gene responses should behave across the network:
+$$
+L = I - D^{-1/2} A D^{-1/2}.
+$$
+We obtain smoothed predictions by diffusing the decoder output
+$y_{\text{pred}} \in \mathbb{R}^G$ over the GRN via the resolvent operator:
+$$
+y_{\text{smoothed}} = (I + \tau L)^{-1} y_{\text{pred}},
+$$
+Equivalently, $y_{\text{smoothed}}$ is the unique minimizer of the
+quadratic objective:
+$$
+y_{\text{smoothed}}
+= \arg\min_{x \in \mathbb{R}^G}
+\left[
+\frac{1}{2} \lVert x - y_{\text{pred}} \rVert_2^2
++ \frac{\tau}{2} x^\top L x
+\right]
+$$
+which encourages transformations to stay close to the original prediction $y_{\text{pred}}$ and enforces 
+smoothness on the GRN, meaning connected genes should have more consistent perturbation responses unless 
+the data strongly suggests otherwise. Unfortunately, post-hoc smoothing yields subpar results across 
+all metrics. We hypothesize that this is because it applies a fixed linear transformation that enforces 
+smoothness on the final predictions irrespective of context, damping sharp gene-specific perturbation 
+effects and spreading them across neighbors in the GRN, thereby weakening the signals that distinguish 
+responsive from non-responsive genes.
+</p>
+</div>
+        </div>
+      </div>
+  <!-- Post-hoc Smoothing -->
+
+
+    <!-- Fine-tuning -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Fine-tuning with GRN Guidance</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+The second post-training method we investigated was fine-tuning with GRN guidance. 
+The goal of GRN-guided fine-tuning is to refine the pretrained perturbation prediction model on new 
+experimental conditions while preserving meaningful biological structures learned during pretraining. 
+Therefore, this approach augments the base training objective with two additional 
+regularization terms that encourages preservation of gene-gene structure and retains knowledge 
+learned from pretraining. In this paradigm, we keep the entire ST module trainable. 
+We formulate the fine-tuning objective:
+$$
+L = L_{\text{base}} + \lambda L_{\text{GRN}} + \mu \lVert W - W_0 \rVert_2^2,
+$$
+where $L_{\text{base}}$ is the original pre-training loss, and
+$$
+L_{\text{GRN}} = \frac{1}{|E|} \sum_{(i,j) \in E} \lVert W_i - W_j \rVert_2^2
+$$
+encourages smoothness across genes connected in the GRN, with $W_i$ denoting the row of the ST decoder
+head corresponding to gene $i$. The proximity term $\lVert W - W_0 \rVert_2^2$ penalizes deviations of
+the current ST decoder weights $W$ at a given fine-tuning step from the pretrained weights $W_0$. The
+hyperparameters $\lambda$ and $\mu$ control the strength of GRN smoothing and proximity regularization,
+respectively, and $t$ denotes the GRN edge subset size. As before, genes linked in the GRN are encouraged
+to remain close in the readout space, while large shifts in the model's outputs are penalized. To make
+optimization of $L_{\text{GRN}}$ computationally tractable, we construct an unbiased estimate by
+subsampling $t$ edges from the GRN:
+$$
+\hat{L}_{\text{GRN}} = \frac{1}{|E_t|} \sum_{(i, j) \in E_t} \lVert W_i - W_j \rVert_2^2
+$$
+We find that incorporating GRN structure admits improvements over the pre-trained baseline, 
+especially for DE-focused metrics. GRN-guided fine-tuning for 2000 steps yields the largest increase in 
+Overlap@N (+80.8%), Precision@N (+52.4%), and DE Spearman (+12.4%). Shorter schedules (800-1200 steps) 
+reduce MAE/MSE, with fine-tuning for 1200 steps achieving the lowest MSE relative to baseline (-22.5%).
+Overall, GRN guidance shapes the model toward lower reconstruction error at intermediate steps and 
+better recovery of biologically meaningful DE patterns at longer fine-tuning schedules.
+</p>
+</div>
+        </div>
+      </div>
+  <!-- Fine-tuning -->
+
+  <!-- Applications -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Applications</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+Perturbation prediction models are most useful for in silico screening, where they can 
+forecast transcriptomic responses to large panels of CRISPR edits or small molecules across many cell 
+types, enabling researchers to prioritize a small subset of high-value experiments. They also support 
+target discovery and mechanism-of-action analysis by identifying the genes and pathways most strongly 
+affected by a given intervention, which can refine hypotheses about causal drivers and downstream programs. 
+In addition, by simulating combination treatments or multi-gene perturbations, these models make it 
+feasible to explore large combinatorial spaces that would be expensive or impractical to cover systematically 
+in wet lab experiments.
+</p>
+        </div>
+      </div>
+    </div>
+  <!-- Applications -->
+
+
+  <!-- Related Readings -->
+    <div class="sec-wrapper blog-sec-wrapper" id="references">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Related Readings</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+          <div>
+          Predicting Cellular Responses to Perturbation Across Diverse Contexts with STATE
+          [<a href="https://arcinstitute.org/manuscripts/State">Paper</a>]
+          [<a href="https://github.com/ArcInstitute/state">Code</a>]
+          [<a href="https://virtualcellchallenge.org">Competition</a>]
+          </div>
+          <div>
+          ScAPE: A Lightweight Multitask Learning Baseline Method to Predict Transcriptomic Responses to Perturbations
+          [<a href="https://www.biorxiv.org/content/10.1101/2025.09.08.674873v1">Paper</a>]
+          </div>
+          <div>
+          GRNFormer: A Biologically-Guided Framework for Integrating Gene Regulatory Networks into RNA Foundation Models
+          [<a href="https://arxiv.org/abs/2503.01682">Paper</a>]
+          [<a href="https://github.com/EperLuo/scDiffusion">Code</a>]
+          </div>
+          <div>
+          GPerturb: Gaussian Process Modeling of Single-cell Perturbation Data
+          [<a href="https://www.nature.com/articles/s41467-025-61165-7">Paper</a>]
+          [<a href="https://github.com/hwxing3259/GPerturb">Code</a>]
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- Related Readings -->
+
+  <!-- Footer -->
+    <footer class="citation col-wrapper">
+      <p>
+        Copyright &copy; <span id="year"></span> Harrison Zhang
+        <i class="bi bi-dot"></i>
+        <a href="https://accessibility.huit.harvard.edu">Accessibility</a>
+      </p>
+    </footer>
+
+  </div>
+
+</body>
+
+<script defer src="blog-script.js"></script>
+
+</html>
