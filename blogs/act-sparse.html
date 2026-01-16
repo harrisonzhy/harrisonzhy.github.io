@@ -42,7 +42,7 @@
       <div class="row align-items-center">
         <div class="col-sm col-wrapper">
           <div class="description">
-            <div class="name">Exploiting Activation Sparsity for Efficient LLM Serving on Neural Processing Units</div>
+            <div class="name">Exploiting Activation Sparsity for Efficient LLM Inference on Neural Processing Units</div>
             <div class="blog-author">
               <me>Harrison Zhang</me>
             </div>
@@ -85,8 +85,8 @@ and scalable to upcoming AMD NPU architectures optimized toward LLM workloads.
       </div>
       <div class="row section-item">
         <div class="col col-wrapper">
-Billion-parameter Large Language Models (LLMs) have revolutionized various AI applications. However, their computational demand 
-for query serving present significant challenges for deployment on resource-limited devices, e.g. commodity workstations.
+Billion-parameter Large Language Models (LLMs) have revolutionized various AI applications. However, the computational demand 
+for inference presents significant challenges for deployment on resource-limited devices, e.g. commodity workstations.
 Therefore, there has been great interest in <a href="https://arxiv.org/abs/2310.04564">ReLU-fication</a>  
 as it offers minimal impact on model training convergence and online accuracy performance,
 while introducing up to 95% exploitable activation sparsity. Now, we aim to translate the newfound activation sparsity 
@@ -107,7 +107,7 @@ into tangible performance gain in the form of high token generation throughput.
       <div class="row section-item">
         <div class="col col-wrapper">
 <p>
-Many works aim to reduce the computational (FLOPs) requirements during inference. However, it is known that LLM serving is memory-bound. 
+Many works aim to reduce the computational (FLOPs) requirements during inference. However, it is known that LLM inference is memory-bound. 
 Therefore, we orthogonally focus on I/O reduction. Layerwise in the ReLU-fied architecture, the FFN features up projection clipped
 by ReLU and fed into down projection, resulting in a sparse-vector GeMV. Given a DMA buffer descriptor encoding a weight matrix transfer, we decompose and selectively load rows 
 that correspond to activated elements in the sparse up projection to realize I/O performance gain.
@@ -163,7 +163,7 @@ and <a href="https://hanlab.mit.edu">many more</a>! Therefore, we expect speedup
       <div class="row section-item">
         <div class="col col-wrapper">
 <p>
-The most salient application is accelerating foundation model serving on commodity workstations equipped with <a href="https://www.amd.com/en/products/processors/consumer/ryzen-ai.html">Ryzen AI</a>. 
+The most salient application is accelerating foundation model inference on commodity workstations equipped with <a href="https://www.amd.com/en/products/processors/consumer/ryzen-ai.html">Ryzen AI</a>. 
 Looking to <a href="https://techcommunity.microsoft.com/discussions/azure-ai-services/building-multi-agentic-workflows-in-autogen-studio-a-low-code-platform/4179253">agentic workflow platforms</a> 
 by Microsoft Research, this has great potential for Mixture of Expert (MoE) serving as experts are hierarchical MoEs and use FFNs at the core. Lower-level weight fetching is on-demand, 
 and there is little model gating or routing in lower levels, so weights are frequently not preloaded.
