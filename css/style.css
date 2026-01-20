@@ -460,6 +460,14 @@ a:hover {
 }
 
 /*------------------
+ * Coursework
+ *------------------*/
+.courses-wrapper .title a {
+  font-weight: bold;
+  color: var(--cardinal);
+}
+
+/*------------------
  * Footer
  *------------------*/
 

@@ -96,7 +96,7 @@ We introduce a simple, lightweight GRN-guided training framework for predicting 
 responses to chemical perturbations across diverse cell types. Building on a strong perturbation 
 response predictor, we incorporate 
 <a href="https://en.wikipedia.org/wiki/Gene_regulatory_network">gene regulatory network (GRN)</a>
-structure through a fine-tuning stage that encourages predicted expression changes to align 
+structure in post-training that encourages predicted expression changes to align 
 with known regulatory interactions. This soft mechanistic prior delivers substantial improvements 
 over the base model in Overlap@N (+80.8%), Precision@N (+52.4%), and DE Spearman correlation (+12.4%). 
 These results demonstrate that integrating structured regulatory knowledge directly into model 
@@ -300,12 +300,8 @@ head corresponding to gene $i$. The proximity term $\lVert W - W_0 \rVert_2^2$ p
 the current ST decoder weights $W$ at a given fine-tuning step from the pretrained weights $W_0$. The
 hyperparameters $\lambda$ and $\mu$ control the strength of GRN smoothing and proximity regularization,
 respectively, and $t$ denotes the GRN edge subset size. As before, genes linked in the GRN are encouraged
-to remain close in the readout space, while large shifts in the model's outputs are penalized. To make
-optimization of $L_{\text{GRN}}$ computationally tractable, we construct an unbiased estimate by
-subsampling $t$ edges from the GRN:
-$$
-\hat{L}_{\text{GRN}} = \frac{1}{|E_t|} \sum_{(i, j) \in E_t} \lVert W_i - W_j \rVert_2^2
-$$
+to remain close in the readout space, while large shifts in the model's outputs are penalized.
+
 We find that incorporating GRN structure admits improvements over the pre-trained baseline, 
 especially for DE-focused metrics. GRN-guided fine-tuning for 2000 steps yields the largest increase in 
 Overlap@N (+80.8%), Precision@N (+52.4%), and DE Spearman (+12.4%). Shorter schedules (800-1200 steps) 
