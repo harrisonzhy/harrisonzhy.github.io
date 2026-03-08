@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+
+  <meta name="description" content="Blog">
+  <meta name="author" content="Harrison Zhang">
+
+  <title>Harrison Zhang</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Academicons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <!-- My CSS -->
+  <link href="../css/blog-style.css" rel="stylesheet">
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    });
+  </script>
+      
+  <script type="text/javascript"
+          src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+</head>
+
+<body>
+
+  <div class="container-fluid">
+
+    <!-- Title -->
+    <div class="sec-wrapper blog-wrapper" id="title">
+      <div class="row align-items-center">
+        <div class="col-sm col-wrapper">
+          <div class="description">
+            <div class="name">Sampler-Conditioned Diffusion Language Models</div>
+            <div class="blog-author">
+              Madison Davis,
+              Kento Nishi,
+              <me>Harrison Zhang</me>,
+              Victor Cai
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Title -->
+
+
+    <!-- Context -->
+    <div class="sec-wrapper blog-sec-wrapper" id="enhancement">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Context</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+Work done as final project for <a href="https://www.eecs.harvard.edu/htk/courses/">CS 242 (Computing at Scale)</a> at Harvard, taught by <a href="https://www.eecs.harvard.edu/htk/">H.T. Kung</a>.
+</p>
+        </div>
+      </div>
+    </div>
+    <!-- Context ->
+
+
+    <!-- Abstract -->
+    <div class="sec-wrapper blog-sec-wrapper" id="abstract">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">tl;dr</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+Large language model (LLM) specialization typically involves routing, mixture of experts, or post-training approaches, which can 
+learn redundant parameters across domains. <a href="https://arxiv.org/abs/2502.09992">Diffusion language models (DLMs)</a> provide specialization at sampling time via iterative denoising 
+and <a href="https://arxiv.org/abs/2207.12598">classifier-free guidance (CFG)</a>. In this project, we study whether a sampler-conditioned DLM, equipped with domain embeddings 
+and guidance, can compose multiple capabilities at sampling time and compete with autoregressive (AR) baselines under a fixed 
+parameter budget. At the ~120M scale, we find that AR models outperform DLMs. However, within the diffusion regime, with two-domain specialization,
+the sampler-conditioned DLM consistently improves over an unguided DLM. Sampling-time domain conditioning is empirically useful inside the 
+diffusion family but does not yet replace AR specialization, at least at 120M scale. However, DLMs are known to be more parameter efficient than ARs at larger-scale.
+        </div>
+      </div>
+    </div>
+    <!-- Abstract -->
+
+    <!-- Introduction -->
+    <div class="sec-wrapper blog-sec-wrapper" id="enhancement">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Introduction</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+Monolithic LLMs can underperform on specialized domains. Cloud providers have addressed the issue by training math, code, and chat variants. 
+However, these strategies (joint multi-domain models, MoE, and domain-specific fine-tuning) all duplicate core circuits such as syntax, 
+world knowledge, and basic reasoning, which fragments capacity. DLMs instead move specialization from parameters to the sampler.
+</p>
+        </div>
+      </div>
+    </div>
+    <!-- Introduction -->
+
+    <!-- Setup and baselines -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Setup and Baselines</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+We pre-train all models on <a href="https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu">FineWeb-Edu-10B</a> 
+and inject domain specialization using <a href="https://huggingface.co/datasets/openai/gsm8k">GSM8K (math)</a> 
+and <a href="https://huggingface.co/datasets/Psychotherapy-LLM/CBT-Bench">CBT (reading comprehension)</a> datasets.
+To ablate architecture and conditioning, we implement six 120M parameter models with matched compute per sample and identical data pipelines: 
+<b>Joint ARM</b> (one AR model trained on both domains, without explicit domain token), 
+<b>MoE ARM</b> (same architecture as joint ARM except MLPs are replaced by MoE blocks and router), 
+<b>separate ARMs</b> (two separate ~60M parameter ARMs, each fine-tuned on one domain), 
+<b>joint DLM</b> (one DLM trained jointly on both domains, without CFG), 
+<b>separate DLMs</b> (two separate ~60M parameter DLMs, each fine-tuned on one domain, without CFG), and 
+<b>sampler-conditioned DLM</b>
+(one DLM trained on both domains, using domain embeddings for sampling-time conditioning).
+
+For ARMs, conditioning strength increases from implicit multi-domain, to MoE, to separate domain-specific fine-tuned model. 
+For DLMs, we compare joint multi-domain training, per-domain specialists, and sampler conditioned learners.
+</p>
+</div>
+        </div>
+      </div>
+<!-- Setup and Baselines -->
+
+    <!-- Sampler Conditioning -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Sampler Conditioning</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+<a href="https://arxiv.org/abs/2207.12598">CFG</a> was introduced to steer the trajectory of generative image diffusion models without training an auxiliary classifier. 
+Inspired by that mechanism, we inject domain embeddings at sampling time to bias every denoising step toward joint-domain trajectory 
+while still sharing all weights. To this end, we design a sampler-conditioned DLM that uses domain embeddings for 
+sampling-time conditioning, without duplicating learned circuits.
+
+Our sampler-conditioned model follows the discrete <a href="https://arxiv.org/abs/2503.09573">Block Diffusion</a> process. 
+Tokens are grouped into blocks of size $B=16$. For each block $b$,
+sample a corruption rate $t_b \in [t_{\ell}, t_{u}]$ and then draw i.i.d per-token Bernoulli masks with probability $t_b$ so every position in the block 
+shares a noise rate but is masked independently. The corrupted prefix is:
+$$
+\mathbf{x}_t = \mathbf{m}_t \cdot \mathbf{x}_{\text{mask}} + (1-\mathbf{m}_t) \cdot \mathbf{x}_0
+$$
+where $\mathbf{m}_t \in [0,1]^T$ stores these Bernoulli draws. We concatenate $[x_t; x0]$ and apply the Block Diffusion 
+attention mask (block diagonal, offset block causal, block causal) so a noisy position can read its own block, already-denoised 
+blocks in the same document, and the clean suffix. The transformer outputs logits $\ell_{\theta}(\mathbf{x}_t, \mathbf{p}, \mathbf{e}_c)$ on masked tokens, 
+and we optimize the block-weighted cross entropy objective:
+$$
+L_{\text{block}} = \mathbb{E} \left[ \frac{\mathbf{m}_t}{t_b + 10^{-3}} \cdot \text{CE}\left(\ell_\theta (\mathbf{x}_t, t, \mathbf{p}, \mathbf{e}_c), \mathbf{x}_0 \right) \right]
+$$
+At sampling, we choose the desired domain token and run the denoiser once per block prefix. Guided and unguided generations differ only in whether 
+$\mathbf{e}_c$ is set to the learned embedding or to zero. This keeps specialization entirely within the guidance embedding while maintaining a single shared architectural backbone.
+</p>
+</div>
+        </div>
+      </div>
+  <!-- Sampler Conditioning -->
+
+  <!-- Applications -->
+    <div class="sec-wrapper blog-sec-wrapper" id="integration">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Applications</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+<p>
+DLMs are most useful for controlled text generation, where they can synthesize coherent, stylistically consistent outputs across diverse domains and formats. 
+They also support sequence editing and infilling by identifying the tokens and spans that require revision, which can iteratively improve overall output 
+quality. Additionally, by removing the serial dependency in output token generation, DLMs in general can offer opportunities for 
+faster inference compared to traditional AR approaches. Specific to sampler-conditioned DLMs, by offloading specialization from parameters to the sampler, it may be possible to achieve effective 
+multi-domain learning without duplication in model parameters, which can lead to more compact and scalable model architectures that are competitive with large autoregressors.
+</p>
+        </div>
+      </div>
+    </div>
+  <!-- Applications -->
+
+
+  <!-- Related Readings -->
+    <div class="sec-wrapper blog-sec-wrapper" id="references">
+      <div class="row section-head">
+        <div class="col col-wrapper">
+          <div class="section-title">Related Readings</div>
+        </div>
+      </div>
+      <div class="row section-item">
+        <div class="col col-wrapper">
+          Large Language Diffusion Models
+          [<a href="https://arxiv.org/abs/2502.09992">Paper</a>]
+          [<a href="https://github.com/ML-GSAI/LLaDA">Code</a>]
+          </div>
+          <div>
+          Dream 7B: Diffusion Large Language Models
+          [<a href="https://arxiv.org/abs/2508.15487">Paper</a>]
+          [<a href="https://github.com/DreamLM/Dream">Code</a>]
+          </div>
+          <div>
+          Diffusion-LM Improves Controllable Text Generation
+          [<a href="https://arxiv.org/abs/2205.14217">Paper</a>]
+          [<a href="https://github.com/XiangLi1999/Diffusion-LM">Code</a>]
+          </div>
+          <div>
+          DLM-One: Diffusion Language Models for One-Step Sequence Generation
+          [<a href="https://arxiv.org/abs/2506.00290">Paper</a>]
+          </div>
+          <div>
+        </div>
+      </div>
+    </div>
+  <!-- Related Readings -->
+
+  <!-- Footer -->
+    <footer class="citation col-wrapper">
+      <p>
+        Copyright &copy; <span id="year"></span> Harrison Zhang
+        <i class="bi bi-dot"></i>
+        <a href="https://accessibility.huit.harvard.edu">Accessibility</a>
+      </p>
+    </footer>
+
+  </div>
+
+</body>
+
+<script defer src="blog-script.js"></script>
+
+</html>
