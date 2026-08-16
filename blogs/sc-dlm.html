@@ -166,25 +166,25 @@ For DLMs, we compare joint multi-domain training, per-domain specialists, and sa
 <p>
 <a href="https://arxiv.org/abs/2207.12598">CFG</a> was introduced to steer the trajectory of generative image diffusion models without training an auxiliary classifier. 
 Inspired by that mechanism, we inject domain embeddings at sampling time to bias every denoising step toward joint-domain trajectory 
-while still sharing all weights. To this end, we design a sampler-conditioned DLM that uses domain embeddings for 
+while still sharing all weights. We design a sampler-conditioned DLM that uses domain embeddings for 
 sampling-time conditioning, without duplicating learned circuits.
 
-Our sampler-conditioned model follows the discrete <a href="https://arxiv.org/abs/2503.09573">Block Diffusion</a> process. 
-Tokens are grouped into blocks of size $B=16$. For each block $b$,
-sample a corruption rate $t_b \in [t_{\ell}, t_{u}]$ and then draw i.i.d per-token Bernoulli masks with probability $t_b$ so every position in the block 
+Our sampler-conditioned model follows the discrete <a href="https://arxiv.org/abs/2503.09573">Block Diffusion</a> process
+where tokens are grouped into blocks of size $B=16$. For each block $b$,
+we sample a corruption rate $t_b \in [t_{\ell}, t_{u}]$ and then draw i.i.d per-token Bernoulli masks with probability $t_b$ where every position in the block 
 shares a noise rate but is masked independently. The corrupted prefix is:
 $$
 \mathbf{x}_t = \mathbf{m}_t \cdot \mathbf{x}_{\text{mask}} + (1-\mathbf{m}_t) \cdot \mathbf{x}_0
 $$
 where $\mathbf{m}_t \in [0,1]^T$ stores these Bernoulli draws. We concatenate $[x_t; x0]$ and apply the Block Diffusion 
-attention mask (block diagonal, offset block causal, block causal) so a noisy position can read its own block, already-denoised 
-blocks in the same document, and the clean suffix. The transformer outputs logits $\ell_{\theta}(\mathbf{x}_t, \mathbf{p}, \mathbf{e}_c)$ on masked tokens, 
-and we optimize the block-weighted cross entropy objective:
+attention mask (block diagonal, offset block causal, block causal), thus a noisy position can read its own block, already-denoised 
+blocks in the same document, and the clean suffix. Call the transformer outputs logits on the masked tokens $\ell_{\theta}(\mathbf{x}_t, \mathbf{p}, \mathbf{e}_c)$. 
+We optimize the block-weighted cross entropy objective:
 $$
 L_{\text{block}} = \mathbb{E} \left[ \frac{\mathbf{m}_t}{t_b + 10^{-3}} \cdot \text{CE}\left(\ell_\theta (\mathbf{x}_t, t, \mathbf{p}, \mathbf{e}_c), \mathbf{x}_0 \right) \right]
 $$
 At sampling, we choose the desired domain token and run the denoiser once per block prefix. Guided and unguided generations differ only in whether 
-$\mathbf{e}_c$ is set to the learned embedding or to zero. This keeps specialization entirely within the guidance embedding while maintaining a single shared architectural backbone.
+$\mathbf{e}_c$ is set to the learned embedding or to zero. Therefore, specialization is kept within the guidance embedding while maintaining a shared backbone.
 </p>
 </div>
         </div>
@@ -201,11 +201,12 @@ $\mathbf{e}_c$ is set to the learned embedding or to zero. This keeps specializa
       <div class="row section-item">
         <div class="col col-wrapper">
 <p>
-DLMs are most useful for controlled text generation, where they can synthesize coherent, stylistically consistent outputs across diverse domains and formats. 
+DLMs are most useful for controlled text generation, where they can synthesize coherent, stylistically consistent outputs across diverse domains. 
 They also support sequence editing and infilling by identifying the tokens and spans that require revision, which can iteratively improve overall output 
 quality. Additionally, by removing the serial dependency in output token generation, DLMs in general can offer opportunities for 
-faster inference compared to traditional AR approaches. Specific to sampler-conditioned DLMs, by offloading specialization from parameters to the sampler, it may be possible to achieve effective 
-multi-domain learning without duplication in model parameters, which can lead to more compact and scalable model architectures that are competitive with large autoregressors.
+faster inference compared to traditional AR approaches. Compared to sampler-conditioned DLMs, by offloading specialization from 
+parameters to the sampler, it may be possible to achieve effective multi-domain learning without duplication in model parameters,
+which could lead to more compact model architectures that are competitive with the current large autoregressors.
 </p>
         </div>
       </div>
