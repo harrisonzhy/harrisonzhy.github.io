@@ -1,3 +1,3 @@
-# Personal Website
+# Personal Homepage
 
-My technical blog-oriented personal homepage, extended from this [template](https://github.com/PingchuanMa/PingchuanMa.github.io).
+My personal homepage, extended from this [template](https://github.com/PingchuanMa/PingchuanMa.github.io).
